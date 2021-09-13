@@ -184,6 +184,25 @@ class Gifpy():
 
         return gifs
 
+    def random_gif(self, q:str, con_filter = "off", limit:int = 20, med_filter = "minimal", ar_range = "all"):
+
+        """
+        Get a randomized list of GIFs for a given search term. 
+        This differs from the search endpoint which returns a rank 
+        ordered list of GIFs for a given search term.
+        """
+
+        random_search = self._get_request(
+            "search",
+            q = q,
+            limit = limit,
+            contentfilter = con_filter,
+            media_filter = med_filter,
+            ar_range = ar_range
+            )
+
+        return [Gif(i) for i in random_search["results"]]
+
     def anon_id(self, key:str):
         """
         Get an anonymous ID for a new user. Store the ID in the client’s
