@@ -193,7 +193,7 @@ class Gifpy():
         """
 
         random_search = self._get_request(
-            "search",
+            "random",
             q = q,
             limit = limit,
             contentfilter = con_filter,
