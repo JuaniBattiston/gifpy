@@ -1,0 +1,6 @@
+CHANGE LOG
+----------
+
+v0.0.1 (12/9/2021)
+------------------
+    - First Release of the lib
