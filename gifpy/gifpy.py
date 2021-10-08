@@ -1,15 +1,16 @@
 import requests
+from typing import Dict, List
 from .errors import GifpyInvalidArgument
 from .gif import Gif
 from .categories import Category
 
-class Gifpy():
 
-    def __init__(self, key, locale:str = "en_US"):
+class Gifpy:
+    def __init__(self, key, locale: str = "en_US"):
         self.key = key
         self.locale = locale
 
-    def _get_request(self, method, **kwargs):
+    def _get_request(self, method, **kwargs) -> Dict:
         """
         Base GET request for API
         """
@@ -23,9 +24,16 @@ class Gifpy():
 
         return request.json()
 
-    def search(self, q:str, con_filter = "off", limit:int = 20, med_filter = "minimal", ar_range = "all"):
+    def search(
+        self,
+        q: str,
+        con_filter="off",
+        limit: int = 20,
+        med_filter="minimal",
+        ar_range="all",
+    ) -> List[Gif]:
         """
-        Get a list of Gif objects containing the most relevant GIFs 
+        Get a list of Gif objects containing the most relevant GIFs
         for a given search term(s), category(ies), emoji(s), or any combination thereof.
 
         Parameters
@@ -60,16 +68,18 @@ class Gifpy():
 
         search = self._get_request(
             "search",
-            q = q,
-            limit = limit,
-            contentfilter = con_filter,
-            media_filter = med_filter,
-            ar_range = ar_range
-            )
+            q=q,
+            limit=limit,
+            contentfilter=con_filter,
+            media_filter=med_filter,
+            ar_range=ar_range,
+        )
 
         return [Gif(i) for i in search["results"]]
 
-    def trending(self, con_filter = "off", limit:int = 20, med_filter = "minimal", ar_range = "all"):
+    def trending(
+        self, con_filter="off", limit: int = 20, med_filter="minimal", ar_range="all"
+    ) -> List[Gif]:
         """
         Get a json object containing a list of the current global trending GIFs.
         The trending stream is updated regularly throughout the day.
@@ -77,19 +87,19 @@ class Gifpy():
 
         search_trending = self._get_request(
             "trending",
-            limit = limit,
-            contentfilter = con_filter,
-            media_filter = med_filter,
-            ar_range = ar_range
-            )
+            limit=limit,
+            contentfilter=con_filter,
+            media_filter=med_filter,
+            ar_range=ar_range,
+        )
 
         return [Gif(i) for i in search_trending["results"]]
 
-    def categories(self, _type: str = "featured", con_filter = "off"):
+    def categories(self, _type: str = "featured", con_filter="off") -> List[Category]:
         """
         Get a list containing Categories object associated with the provided type.
         Each category will include a corresponding search URL to be used if the
-        user clicks on the category. The search URL will include the apikey, 
+        user clicks on the category. The search URL will include the apikey,
         anonymous id, and locale that were used on the original call to the categories endpoint
 
         Parameters
@@ -107,41 +117,39 @@ class Gifpy():
         """
 
         search_category = self._get_request(
-            "categories",
-            type = _type,
-            contentfilter = con_filter
-            )
+            "categories", type=_type, contentfilter=con_filter
+        )
 
         return [Category(i, _type) for i in search_category["tags"]]
 
-    def search_suggestions(self, query, limit = 20) -> list:
+    def search_suggestions(self, query, limit=20) -> List[str]:
         """
         Returns a list of search suggestions
         """
 
-        search_sugg = self._get_request("search_suggestions", q = query, limit = limit)
+        search_sugg = self._get_request("search_suggestions", q=query, limit=limit)
 
         return search_sugg["results"]
 
-    def autocomplete(self, query, limit = 20) -> list:
+    def autocomplete(self, query, limit=20) -> List[str]:
         """
         Returns a list of search autocompletions based on a query
         """
 
-        search_auto = self._get_request("autocomplete", q = query, limit = limit)
+        search_auto = self._get_request("autocomplete", q=query, limit=limit)
 
         return search_auto["results"]
 
-    def trending_terms(self, limit = 20) -> list:
+    def trending_terms(self, limit=20) -> List[str]:
         """
         Get a list of the current trending search terms.
         The list is updated Hourly by Tenor’s AI.
         """
 
-        search = self._get_request("trending_terms", limit = limit)
+        search = self._get_request("trending_terms", limit=limit)
         return search["results"]
 
-    def gifs(self, ids, media_filter = "minimal", limit = 20):
+    def gifs(self, ids, media_filter="minimal", limit=20) -> List[Gif]:
         """
         Get the GIF(s) for the corresponding id(s)
         If only one id is fetch a single Gif object will be returned
@@ -149,7 +157,7 @@ class Gifpy():
 
         Parameters
         ----------
-        
+
         ids: `str`
             Comma separated list of GIF IDs (max: 50)
         media_filter `str`
@@ -176,7 +184,9 @@ class Gifpy():
         if limit > 50:
             raise GifpyInvalidArgument()
 
-        search = self._get_request("gifs", ids = ids, media_filter = media_filter, limit = limit)
+        search = self._get_request(
+            "gifs", ids=ids, media_filter=media_filter, limit=limit
+        )
         gifs = [Gif(i) for i in search["results"]]
 
         if len(gifs) == 1:
@@ -184,32 +194,39 @@ class Gifpy():
 
         return gifs
 
-    def random_gif(self, q:str, con_filter = "off", limit:int = 20, med_filter = "minimal", ar_range = "all"):
+    def random_gif(
+        self,
+        q: str,
+        con_filter="off",
+        limit: int = 20,
+        med_filter="minimal",
+        ar_range="all",
+    ):
 
         """
-        Get a randomized list of GIFs for a given search term. 
-        This differs from the search endpoint which returns a rank 
+        Get a randomized list of GIFs for a given search term.
+        This differs from the search endpoint which returns a rank
         ordered list of GIFs for a given search term.
         """
 
         random_search = self._get_request(
             "random",
-            q = q,
-            limit = limit,
-            contentfilter = con_filter,
-            media_filter = med_filter,
-            ar_range = ar_range
-            )
+            q=q,
+            limit=limit,
+            contentfilter=con_filter,
+            media_filter=med_filter,
+            ar_range=ar_range,
+        )
 
         return [Gif(i) for i in random_search["results"]]
 
-    def anon_id(self, key:str):
+    def anon_id(self, key: str) -> str:
         """
         Get an anonymous ID for a new user. Store the ID in the client’s
         cache for use on any additional API calls made by the user, either
         in this session or any future sessions.
         """
 
-        requested_id = self._get_request("anonid", key = key)
+        requested_id = self._get_request("anonid", key=key)
 
         return requested_id["anonId"]
