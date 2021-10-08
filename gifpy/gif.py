@@ -1,8 +1,9 @@
 from datetime import datetime
 from .media import Media
 
-class Gif():
-    
+
+class Gif:
+
     __slots__ = (
         "id",
         "title",
@@ -16,16 +17,16 @@ class Gif():
         "flags",
         "shares",
         "has_caption",
-        "has_audio"
+        "has_audio",
     )
 
-    def __init__(self, response:dict):
+    def __init__(self, response: dict):
         self.id: int = int(response["id"])
         self.title: str = response["title"]
         self.h1_title: str = response["h1_title"]
         self.media: list = Media(response["media"][0])
         self.bg_color: str = response["bg_color"]
-        self.created_at: float = response["created"] #Unix Time
+        self.created_at: float = response["created"]  # Unix Time
         self.itemurl: str = response["itemurl"]
         self.url: str = response["url"]
         self.tags: list = response["tags"]
@@ -37,12 +38,12 @@ class Gif():
     def __repr__(self) -> str:
 
         attrs = [
-            ('id', self.id),
-            ('title', self.title),
-            ('created_at', self.created_at),
+            ("id", self.id),
+            ("title", self.title),
+            ("created_at", self.created_at),
         ]
-        joined = ' '.join('%s=%r' % t for t in attrs)
-        return f'<{self.__class__.__name__} {joined}>'
+        joined = " ".join("%s=%r" % t for t in attrs)
+        return f"<{self.__class__.__name__} {joined}>"
 
     @property
     def utc_time(self):
@@ -50,4 +51,4 @@ class Gif():
         Return UTC gif creation time.
         """
 
-        return datetime.utcfromtimestamp(self.created_at).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.utcfromtimestamp(self.created_at).strftime("%Y-%m-%d %H:%M:%S")
